@@ -18,16 +18,19 @@ class GeneticAlg:
         self.result_image = img
 
     def run(self):
-        for i, dna_mutation in enumerate(tqdm(self.get_mutation())):
-            mutated_image = self.dna.grow_result(dna_mutation)
-            mutation_cost = self.cost(mutated_image, self.result_image)
-            if mutation_cost < self.current_cost:
-                self.dna.apply(dna_mutation)
-                self.current_cost = mutation_cost
-                showimage(mutated_image, self.result_image)
-            if i % 201 == 0:
-                showimage(mutated_image, self.result_image)
-        return self.dna.grow_result()
+        try:
+            for i, dna_mutation in enumerate(tqdm(self.get_mutation())):
+                mutated_image = self.dna.grow_result(dna_mutation)
+                mutation_cost = self.cost(mutated_image, self.result_image)
+                if mutation_cost < self.current_cost:
+                    self.dna.apply(dna_mutation)
+                    self.current_cost = mutation_cost
+                    # showimage(mutated_image, self.result_image)
+                if i % 100 == 0:
+                    showimage(mutated_image, self.result_image)
+            return self.dna.grow_result()
+        except KeyboardInterrupt:
+            showimage(mutated_image)
 
     def get_mutation(self):
         for _ in range(self.num_iter):
@@ -95,9 +98,10 @@ if __name__ == '__main__':
     # res = b + img
     # res = r + g
     # print('res', res.min(), res.max())
-    alg = GeneticAlg(150, shape=Circle, img=img, num_iter=5000)
+    alg = GeneticAlg(70, shape=Circle, img=img, num_iter=5000)
     she = alg.run()
     # fig = plt.figure()
     # ani = animation.FuncAnimation(fig, alg.run, interval=100)
     # plt.show()
     showimage(she, img)
+    showimage(she)
