@@ -72,7 +72,8 @@ class Shape(ABC):
 
 class Circle(Shape):
 
-    def __init__(self, color, color_int, radius, x, y):
+    def __init__(self, color=None, color_int=None,
+                 radius=None, x=None, y=None, round_up: bool = True):
         if not color:
             color = Color(np.random.randint(0, 3))
         if not color_int:
@@ -83,7 +84,8 @@ class Circle(Shape):
             x = np.random.randint(1, 100, dtype=np.uint8)
         if not y:
             y = np.random.randint(1, 250, dtype=np.uint8)
-
+        if round_up and radius <= 0:
+            radius = 1
         if radius <= 0:
             raise ValueError("Circle radius has to be greater than zero")
         params = Parameters({'radius': radius, 'x': x, 'y': y})
