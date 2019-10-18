@@ -66,17 +66,23 @@ class GeneticAlg:
         self.num_iter = num_iter
         self.result_image = img
 
-    def not_get(self):
-        im = None
-        while True:
-            try:
-                im = next(self.run())
-                showimage(im)
-            except StopIteration:
-                break
-        return im
+    def run_loop(self):
+        for i, dna_mutation in enumerate(tqdm(self.get_mutation())):
+            mutated_image = self.dna.gen_result(dna_mutation)
+            mutation_cost = self.cost(mutated_image, self.result_image)
+            if mutation_cost < self.current_cost:
+                self.dna.apply(dna_mutation)
+                self.current_cost = mutation_cost
 
-    def run(self):
+                # yield mutated_image + self.result_image
+                showimage(mutated_image, self.result_image)
+
+            if i % 200 == 0:
+                # yield mutated_image + self.result_image
+                showimage(mutated_image, self.result_image)
+        return self.dna.gen_result()
+
+    def run_generator(self):
         for i, dna_mutation in enumerate(tqdm(self.get_mutation())):
             mutated_image = self.dna.gen_result(dna_mutation)
             mutation_cost = self.cost(mutated_image, self.result_image)
@@ -147,8 +153,7 @@ class SimulatedAnnealing:
 
 
 if __name__ == '__main__':
-    img = imageio.imread(
-        'circles.jpg')
+    img = imageio.imread('mona-lisa.jpg!PinterestLarge.jpg')
     # r = Circle('red', 180, 60, x=2, y=200)
     # g = Circle(1, 200, 50, x=60, y=200)
     # b = Circle(Color['blue'], 200, 50, x=80, y=200)
@@ -159,7 +164,7 @@ if __name__ == '__main__':
     # res = r + g
     # print('res', res.min(), res.max())
     alg = GeneticAlg(300, shape=Circle, img=img, num_iter=2000)
-    she = alg.not_get()
+    she = alg.run_loop()
     # fig = plt.figure()
     # ani = animation.FuncAnimation(fig, alg.run, interval=100)
     # plt.show()

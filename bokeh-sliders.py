@@ -77,15 +77,6 @@ for w in [offset, amplitude, phase, freq]:
 # Set up layouts and add to document
 inputs = widgetbox(text, offset, amplitude, phase, freq)
 
-a = np.array(imageio.imread('circles.jpg'))#[:,:,0]
-# a = np.array([[1,2], [3, 4]])
-kind_of_image_plot = figure(title="RGBA image",
-                            plot_width=int(a.shape[1]/1),
-                            plot_height=int(a.shape[0]/1),
-                            # x_range = [0,10], y_range = [0,10],
-                            )
-
-
 curdoc().title = "Sliders"
 
 # Open image, and make sure it's RGB*A*
@@ -152,7 +143,7 @@ die = False
 def run_alg():
 
     alg = GeneticAlg(40, shape=Circle, img=np.asarray(circles), num_iter=2000)
-    for c_i in alg.run():
+    for c_i in alg.run_generator():
         x, y = random(), random()
         c_i = np.array(c_i, dtype=np.uint8)
         circ = Image.fromarray(c_i).convert('RGBA')
