@@ -21,7 +21,7 @@ class GeneticAlg:
         try:
             for i, dna_mutation in enumerate(tqdm(self.get_mutation())):
                 mutated_image = self.dna.grow_result(dna_mutation)
-                mutation_cost = self.fitness(mutated_image, self.result_image)
+                mutation_cost = self.fitness(mutated_image)
                 if mutation_cost < self.current_cost:
                     self.dna.apply(dna_mutation)
                     self.current_cost = mutation_cost
@@ -36,40 +36,12 @@ class GeneticAlg:
         for _ in range(self.num_iter):
             yield self.dna.get_mutation()
 
-    @staticmethod
-    def fitness(arr1, arr2):
+    def fitness(self, arr1, arr2=None):
+        if arr2 is None:
+            arr2 = self.result_image
         return np.linalg.norm(arr1[:, :, 0] - arr2[:, :, 0]) + \
                np.linalg.norm(arr1[:, :, 1] - arr2[:, :, 1]) + \
                np.linalg.norm(arr1[:, :, 2] - arr2[:, :, 2])
-
-
-class GeneratedImage:
-    def __init__(self):
-        self.shapes = []
-
-    def combine_shapes(self):
-        pass
-
-    def normalize_shapes(self):
-        pass
-
-    def distance_to(self, arr):
-        np.linalg.norm(self.normalize_shapes() - arr)
-
-
-class Image:
-    def __init__(self, path):
-        self.image = imageio.imread(path)
-
-    def plot_image(self):
-        figure = plt.imshow(self.image)
-        plt.show()
-
-    def image_shape(self):
-        return self.image.shape[:2]
-
-    def __call__(self, *args, **kwargs):
-        return self.image
 
 
 def show_image(img, img2: np.ndarray = None):
