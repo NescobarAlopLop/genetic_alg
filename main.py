@@ -27,10 +27,10 @@ class GeneticAlg:
                     self.current_cost = mutation_cost
                     # showimage(mutated_image, self.result_image)
                 if i % 100 == 0:
-                    showimage(mutated_image, self.result_image)
+                    show_image(mutated_image, self.result_image)
             return self.dna.grow_result()
         except KeyboardInterrupt:
-            showimage(mutated_image)
+            show_image(mutated_image)
 
     def get_mutation(self):
         for _ in range(self.num_iter):
@@ -72,11 +72,7 @@ class Image:
         return self.image
 
 
-# image = Image('circle.png')
-# image.plot_image()
-
-
-def showimage(img, img2: np.ndarray = None):
+def show_image(img, img2: np.ndarray = None):
     plt.imshow(np.clip(img, 0, 255))
     if img2 is not None:
         plt.imshow(img2, alpha=0.5)
@@ -84,13 +80,8 @@ def showimage(img, img2: np.ndarray = None):
     return img.shape
 
 
-class SimulatedAnnealing:
-    pass
-
-
 if __name__ == '__main__':
-    img = imageio.imread(
-        '/home/ge/Documents/genetic_image_approximation/mona-lisa.jpg!PinterestLarge.jpg')
+    img = imageio.imread('mona-lisa.jpg!HalfHD.jpg')
     # r = Circle('red', 180, 60, x=2, y=200)
     # g = Circle(1, 200, 50, x=60, y=200)
     # b = Circle(Color['blue'], 200, 50, x=80, y=200)
@@ -105,5 +96,5 @@ if __name__ == '__main__':
     # fig = plt.figure()
     # ani = animation.FuncAnimation(fig, alg.run, interval=100)
     # plt.show()
-    showimage(she, img)
-    showimage(she)
+    show_image(she, img)
+    show_image(she)
