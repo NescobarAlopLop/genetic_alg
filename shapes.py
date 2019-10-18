@@ -1,7 +1,7 @@
 import random
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Dict
+from typing import Dict, Tuple
 
 import numpy as np
 from skimage import draw
@@ -20,7 +20,7 @@ class Parameters(dict):
     __delattr__ = dict.__delitem__
 
 
-class Shape(ABC):
+class Creature(ABC):
 
     def __init__(self, color: [int, str, Color], color_int, params: Dict):
         if isinstance(color, int):
@@ -69,8 +69,13 @@ class Shape(ABC):
     def shape(self):
         pass
 
+    @staticmethod
+    @abstractmethod
+    def get_random_params(img_shape: Tuple):
+        pass
 
-class Circle(Shape):
+
+class Circle(Creature):
 
     def __init__(self, color=None, color_int=None,
                  radius=None, x=None, y=None, r: int = 200, g: int = 200,
@@ -87,8 +92,8 @@ class Circle(Shape):
             y = np.random.randint(1, 250, dtype=np.uint8)
         if clip and radius < 4:
             radius = 5
-        if clip and radius > 60:
-            radius = 50
+        # if clip and radius > 60:
+        #     radius = 50
         if radius <= 0:
             raise ValueError("Circle radius has to be greater than zero")
         self.r = r
@@ -100,7 +105,7 @@ class Circle(Shape):
         self.y = y
         self.radius = radius
         params = Parameters({'radius': radius, 'x': x, 'y': y})
-        Shape.__init__(self, color, color_int, params)
+        Creature.__init__(self, color, color_int, params)
         # if not color:
         #     color = Color(np.random.randint(0, 3))
         # if not color_int:
@@ -150,11 +155,44 @@ class Circle(Shape):
         return np.clip(other.draw_on(me), 0, 255, dtype=np.uint8)
 
     @staticmethod
-    def get_random_params():
-        return {
-            'x': random.randint(0, 250),
-            'y': random.randint(0, 450),
-            'color_int': random.randint(100, 180),
-            'color': random.randint(0, 2),
-            'radius': random.randint(20, 70)
-        }
+    def get_random_params(img_shape: Tuple):
+        deviation = 30
+        x = random.randint(-deviation, img_shape[1] + deviation)
+        y = random.randint(-deviation, img_shape[0] + deviation)
+        if x < 0 or y < 0:
+            b = min(max(abs(x), abs(y)), max(abs(x), abs(y) + deviation))
+            e = max(max(abs(x), abs(y)), max(abs(x), abs(y) + deviation))
+            radius = random.randint(b, e)
+        elif x > img_shape[1] or y > img_shape[0]:
+            b = min(max(abs(img_shape[0] - x), abs(img_shape[0] - y)), deviation)
+            e = max(max(abs(img_shape[0] - x), abs(img_shape[0] - y)), deviation)
+            radius = random.randint(b, e)
+        else:
+            start = min(60, min(img_shape))
+            end = max(60, min(img_shape))
+
+            radius = random.randint(start, end)
+
+        r = random.randint(0, 255)
+        g = random.randint(0, 255 - r)
+        b = random.randint(0, 255 - r - g)
+
+        return np.array([r, g, b, x, y, radius]).reshape(1, 6)
+
+    @staticmethod
+    def mutate(arr: np.ndarray) -> np.ndarray:
+        deviation = 5
+        color_rate = 4
+        # r, g, b, x, y, radius
+        r = arr[0] + random.randint(-color_rate, + color_rate)
+        r = np.clip(r, 0, 255)
+        g = arr[1] + random.randint(-color_rate, + color_rate)
+        g = np.clip(g, 0, 255 - r)
+        b = arr[2] + random.randint(-color_rate, + color_rate)
+        b = np.clip(b, 0, 255 - r - g)
+
+        x = arr[3] + random.randint(-deviation, deviation)
+        y = arr[4] + random.randint(-deviation, deviation)
+        radius = arr[5] + random.randint(-2, 2)
+
+        return np.array([r, g, b, x, y, radius]).reshape((1, 6))

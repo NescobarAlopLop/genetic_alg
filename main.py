@@ -21,7 +21,7 @@ class GeneticAlg:
         try:
             for i, dna_mutation in enumerate(tqdm(self.get_mutation())):
                 mutated_image = self.dna.grow_result(dna_mutation)
-                mutation_cost = self.cost(mutated_image, self.result_image)
+                mutation_cost = self.fitness(mutated_image, self.result_image)
                 if mutation_cost < self.current_cost:
                     self.dna.apply(dna_mutation)
                     self.current_cost = mutation_cost
@@ -37,8 +37,10 @@ class GeneticAlg:
             yield self.dna.get_mutation()
 
     @staticmethod
-    def cost(arr1, arr2):
-        return np.linalg.norm(arr1 - arr2)
+    def fitness(arr1, arr2):
+        return np.linalg.norm(arr1[:, :, 0] - arr2[:, :, 0]) + \
+               np.linalg.norm(arr1[:, :, 1] - arr2[:, :, 1]) + \
+               np.linalg.norm(arr1[:, :, 2] - arr2[:, :, 2])
 
 
 class GeneratedImage:
@@ -98,7 +100,7 @@ if __name__ == '__main__':
     # res = b + img
     # res = r + g
     # print('res', res.min(), res.max())
-    alg = GeneticAlg(70, shape=Circle, img=img, num_iter=5000)
+    alg = GeneticAlg(20, shape=Circle, img=img, num_iter=5000)
     she = alg.run()
     # fig = plt.figure()
     # ani = animation.FuncAnimation(fig, alg.run, interval=100)
