@@ -4,3 +4,5 @@ matplotlib
 opencv-python
 tqdm
 scikit-image
+flask
+bokeh
