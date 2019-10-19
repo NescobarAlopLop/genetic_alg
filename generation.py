@@ -54,9 +54,15 @@ class Generation:
         for dna in self.generation:
             dna_mutation = dna.get_mutation()
             mutated_image = dna.grow_result(dna_mutation)
-            dna_fitness = np.linalg.norm(self.image_to_esimtate, mutated_image)
+            dna_fitness = fitness(self.image_to_esimtate, mutated_image)
             heappush(h, (dna_fitness, dna))
         return h
+
+
+def fitness(arr1, arr2):
+    return np.linalg.norm(arr1[:, :, 0] - arr2[:, :, 0]) + \
+           np.linalg.norm(arr1[:, :, 1] - arr2[:, :, 1]) + \
+           np.linalg.norm(arr1[:, :, 2] - arr2[:, :, 2])
 
 
 if __name__ == '__main__':
@@ -65,6 +71,6 @@ if __name__ == '__main__':
                      image_to_esimtate=img)
     gen.population_snapshot()
     gen_heap = gen.evaluate_generation()
-    n = 5
+    n = 4
     best_n = [heappop(gen_heap)[1] for _ in range(n)]
     gen.population_snapshot(gen=best_n)
