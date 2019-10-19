@@ -1,11 +1,13 @@
-from dna import DNA
+from heapq import heappush, heappop
+from typing import List
+
+import imageio
 import matplotlib.pyplot as plt
 import numpy as np
 from math import sqrt, ceil
-import imageio
+
+from dna import DNA
 from shapes import Circle
-from heapq import heappush, heappop
-from typing import List
 
 
 class Generation:
@@ -26,7 +28,7 @@ class Generation:
         # small DNAs (less chromosomes / shapes ) and add complexity with time
         self.generation = [DNA(dna_size=1,
                                geometric_shape=species_kind,
-                               image_to_esimtate=image_to_esimtate)
+                               image_to_estimate=image_to_esimtate)
                            for _ in range(population_count)]
         self.image_to_esimtate = image_to_esimtate
 
@@ -34,14 +36,17 @@ class Generation:
         if gen is None:
             gen = self.generation
         num_plots_per_axis = ceil(sqrt(len(gen)))
-        fig, axs = plt.subplots(num_plots_per_axis, num_plots_per_axis, gridspec_kw = {'wspace':0, 'hspace': 0.2})
+        fig, axs = plt.subplots(num_plots_per_axis, num_plots_per_axis,
+                                gridspec_kw={'wspace': 0, 'hspace': 0.2})
         fig.suptitle('generation sample')
         gen_idx = 0
         try:
             for i in range(num_plots_per_axis):
                 for j in range(num_plots_per_axis):
                     axs[i, j].set_title('dna: {}, fitness: {:.2f}'
-                                        .format(gen_idx, gen[gen_idx].fitness_cost), fontsize=8)
+                                        .format(gen_idx,
+                                                gen[gen_idx].fitness_cost),
+                                        fontsize=8)
                     axs[i, j].imshow(gen[gen_idx].grow_result())
                     axs[i, j].axis('off')
                     gen_idx += 1
@@ -52,11 +57,7 @@ class Generation:
     def evaluate_generation(self):
         h = []
         for dna in self.generation:
-            dna_mutation = dna.get_mutation()
-            mutated_image = dna.grow_result(dna_mutation)
-            dna_fitness = fitness(self.image_to_esimtate, mutated_image)
-            dna.fitness_cost = dna_fitness
-            heappush(h, (dna_fitness, dna))
+            heappush(h, (dna.fitness_cost, dna))
         return h
 
 
@@ -67,8 +68,8 @@ def fitness(arr1, arr2):
 
 
 if __name__ == '__main__':
-    img = imageio.imread('mona-lisa.jpg!HalfHD.jpg')
-    gen = Generation(population_count=16, species_kind=Circle,
+    img = imageio.imread('circle.jpg')
+    gen = Generation(population_count=9, species_kind=Circle,
                      image_to_esimtate=img)
     gen.population_snapshot()
     gen_heap = gen.evaluate_generation()

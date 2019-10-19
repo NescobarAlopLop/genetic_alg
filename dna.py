@@ -13,6 +13,12 @@ def showimage(img, img2: np.ndarray = None):
     return img.shape
 
 
+def fitness(arr1, arr2):
+    return np.linalg.norm(arr1[:, :, 0] - arr2[:, :, 0]) + \
+           np.linalg.norm(arr1[:, :, 1] - arr2[:, :, 1]) + \
+           np.linalg.norm(arr1[:, :, 2] - arr2[:, :, 2])
+
+
 class DNA:
     """
     self.dna is np.array, by columns:
@@ -21,25 +27,27 @@ class DNA:
     for circle:
     red, green, blue, x_pos, y_pos, radius
     """
-    def __init__(self, dna_size, geometric_shape, image_to_esimtate):
+    def __init__(self, dna_size, geometric_shape, image_to_estimate):
         self.generation = 1
         self.max_dna_size = dna_size
         self.current_dna_size = self.generation
 
         self.mutating_percentage = 100
         self.mutation_quantity = 20
-        self.image_to_estimate = image_to_esimtate
-        self.image_shape = image_to_esimtate.shape
+        self.image_to_estimate = image_to_estimate
+        self.image_shape = image_to_estimate.shape
         self.geometric_shape = geometric_shape
-        self.avg_color_intensity = image_to_esimtate.sum(axis=2).mean()
+        self.avg_color_intensity = image_to_estimate.sum(axis=2).mean()
         # sig = signature(geometric_shape.__init__)
         # num_params = len(sig.parameters) - 1
-        self.dna = self.geometric_shape.get_random_params(self.image_to_estimate.shape)
-        self.fitness_cost = np.inf
+        self.dna = self.geometric_shape.get_random_params(self.image_shape)
+
+        self.fitness_cost = fitness(self.grow_result(), self.image_to_estimate)
 
     def extend_by(self, num_new_rows):
         for i in range(num_new_rows):
-            np.vstack((self.dna, self.geometric_shape.get_random_params(self.image_to_estimate.shape)))
+            np.vstack((self.dna, self.geometric_shape.get_random_params(
+                self.image_to_estimate.shape)))
         return self.dna
 
     def get_mutation(self, percent_mutation: int = 70):
@@ -80,8 +88,11 @@ class DNA:
                'y': x[4],
                'radius': x[5],
                }), axis=1, arr=dna)
-
         for shape in shapes:
             rv = shape + rv
         rv[:, :3] = np.clip(rv[:, :3], a_min=0, a_max=255)
         return rv
+
+    def __repr__(self):
+        # TODO: num chromosomes, cost
+        pass
