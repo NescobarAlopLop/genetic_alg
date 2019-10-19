@@ -94,5 +94,5 @@ class DNA:
         return rv
 
     def __repr__(self):
-        # TODO: num chromosomes, cost
-        pass
+        return f'<DNA: chromosome - {self.current_dna_size}, ' \
+            f'fitness: {self.fitness_cost}>'
