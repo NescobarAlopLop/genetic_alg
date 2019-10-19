@@ -11,7 +11,8 @@ from shapes import Circle
 
 
 class Generation:
-    def __init__(self, population_count, species_kind, image_to_esimtate):
+    def __init__(self, population_count, species_kind, image_to_esimtate,
+                 num_iter: int=5):
         # generation is a number of DNAs
         # each DNA describes an image with chromosomes
         # so DNA is an image, chromosome is shape (circle) and generation is a
@@ -31,6 +32,8 @@ class Generation:
                                image_to_estimate=image_to_esimtate)
                            for _ in range(population_count)]
         self.image_to_esimtate = image_to_esimtate
+        self.num_iterations = num_iter
+        self.population_count = population_count
 
     def population_snapshot(self, gen: List = None):
         if gen is None:
@@ -60,6 +63,25 @@ class Generation:
             heappush(h, (dna.fitness_cost, dna))
         return h
 
+    def get_n_best(self, n: int) -> np.ndarray:
+        eval_gen = self.evaluate_generation()
+        return np.array([heappop(eval_gen)[1].dna[0] for _ in range(n)])
+
+    def run(self):
+        for i in range(self.num_iterations):
+            n_best = self.get_n_best(4)
+            self.new_generation(n_best, self.population_count)
+            # random cross mutation of 4 into self.population_count
+
+    def new_generation(self, base_dna, new_gen_size):
+        a = base_dna
+        new_gen = np.zeros(shape=(self.population_count, base_dna.shape[1]))
+        for col in range(new_gen.shape[1]):
+            new_gen[:, col] = np.random.choice(a[:, col], self.population_count)
+        self.generation = new_gen
+        # TODO: mixed up with generation definition
+        return new_gen
+
 
 def fitness(arr1, arr2):
     return np.linalg.norm(arr1[:, :, 0] - arr2[:, :, 0]) + \
@@ -72,7 +94,8 @@ if __name__ == '__main__':
     gen = Generation(population_count=9, species_kind=Circle,
                      image_to_esimtate=img)
     gen.population_snapshot()
-    gen_heap = gen.evaluate_generation()
-    n = 4
-    best_n = [heappop(gen_heap)[1] for _ in range(n)]
-    gen.population_snapshot(gen=best_n)
+    # gen_heap = gen.evaluate_generation()
+    # n = 4
+    # best_n = [heappop(gen_heap)[1] for _ in range(n)]
+    # gen.population_snapshot(gen=best_n)
+    gen.run()
