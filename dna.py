@@ -35,6 +35,7 @@ class DNA:
         # sig = signature(geometric_shape.__init__)
         # num_params = len(sig.parameters) - 1
         self.dna = self.geometric_shape.get_random_params(self.image_to_estimate.shape)
+        self.fitness_cost = np.inf
 
     def extend_by(self, num_new_rows):
         for i in range(num_new_rows):

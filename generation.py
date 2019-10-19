@@ -34,14 +34,14 @@ class Generation:
         if gen is None:
             gen = self.generation
         num_plots_per_axis = ceil(sqrt(len(gen)))
-        fig, axs = plt.subplots(num_plots_per_axis, num_plots_per_axis)
-
+        fig, axs = plt.subplots(num_plots_per_axis, num_plots_per_axis, gridspec_kw = {'wspace':0, 'hspace': 0.2})
         fig.suptitle('generation sample')
         gen_idx = 0
         try:
             for i in range(num_plots_per_axis):
                 for j in range(num_plots_per_axis):
-                    # axs[i, j].set_title('dna number: {}'.format(gen_idx))
+                    axs[i, j].set_title('dna: {}, fitness: {:.2f}'
+                                        .format(gen_idx, gen[gen_idx].fitness_cost), fontsize=8)
                     axs[i, j].imshow(gen[gen_idx].grow_result())
                     axs[i, j].axis('off')
                     gen_idx += 1
@@ -55,6 +55,7 @@ class Generation:
             dna_mutation = dna.get_mutation()
             mutated_image = dna.grow_result(dna_mutation)
             dna_fitness = fitness(self.image_to_esimtate, mutated_image)
+            dna.fitness_cost = dna_fitness
             heappush(h, (dna_fitness, dna))
         return h
 
