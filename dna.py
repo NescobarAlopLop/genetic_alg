@@ -27,21 +27,21 @@ class DNA:
     for circle:
     red, green, blue, x_pos, y_pos, radius
     """
-    def __init__(self, dna_size, geometric_shape, image_to_estimate):
-        self.generation = 1
-        self.max_dna_size = dna_size
+    def __init__(self, dna_len, specie, image_to_estimate):
+        self.generation = 3
+        self.dna_len = dna_len
         self.current_dna_size = self.generation
 
         self.mutating_percentage = 100
         self.mutation_quantity = 20
         self.image_to_estimate = image_to_estimate
         self.image_shape = image_to_estimate.shape
-        self.geometric_shape = geometric_shape
+        self.geometric_shape = specie
         self.avg_color_intensity = image_to_estimate.sum(axis=2).mean()
         # sig = signature(geometric_shape.__init__)
         # num_params = len(sig.parameters) - 1
         self.dna = self.geometric_shape.get_random_params(self.image_shape)
-
+        self.dna = self.extend_by(4)
         self.fitness_cost = fitness(self.grow_result(), self.image_to_estimate)
 
     def extend_by(self, num_new_rows):
@@ -94,5 +94,5 @@ class DNA:
         return rv
 
     def __repr__(self):
-        return f'<DNA: chromosome - {self.current_dna_size}, ' \
-            f'fitness: {self.fitness_cost}>'
+        return '<DNA: chromosomes: {}, ' \
+            'fitness: {:2}>'.format(self.current_dna_size, self.fitness_cost)
