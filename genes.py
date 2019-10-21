@@ -71,7 +71,7 @@ class Gene(ABC):
 
     @staticmethod
     @abstractmethod
-    def get_random_params(img_shape: Tuple):
+    def generate_random(img_shape: Tuple):
         pass
 
 
@@ -155,7 +155,7 @@ class Circle(Gene):
         return np.clip(other.draw_on(me), 0, 255, dtype=np.uint8)
 
     @staticmethod
-    def get_random_params(img_shape: Tuple):
+    def generate_random(img_shape: Tuple):
         deviation = 30
         x = random.randint(-deviation, img_shape[1] + deviation)
         y = random.randint(-deviation, img_shape[0] + deviation)
