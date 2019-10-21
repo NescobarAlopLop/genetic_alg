@@ -1,18 +1,18 @@
 import imageio
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
 import numpy as np
 from tqdm import tqdm
-from inspect import signature
-from genes import Circle, Color
-import random
+
 from dna import DNA
+from genes import Circle
 
 
 class GeneticAlg:
     def __init__(self, dna_size, shape, img: np.ndarray, num_iter: int = 50):
 
-        self.dna = DNA(dna_size, shape, img)
+        self.dna = DNA(geometric_shape=shape,
+                       target_organism=img,
+                       genes_in_dna=dna_size)
         self.current_cost = np.inf
         self.num_iter = num_iter
         self.result_image = img
