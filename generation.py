@@ -1,4 +1,4 @@
-from heapq import heappush, heappop
+from heapq import heappush, nsmallest
 from typing import List
 
 import imageio
@@ -27,15 +27,15 @@ class Generation:
 
         # concluding from youtube video it might be a good idea start with
         # small DNAs (less chromosomes / shapes ) and add complexity with time
-        self.generation = [DNA(dna_size=1,
-                               geometric_shape=species_kind,
+        self.generation = [DNA(dna_len=1,
+                               specie=species_kind,
                                image_to_estimate=image_to_esimtate)
                            for _ in range(population_count)]
         self.image_to_esimtate = image_to_esimtate
         self.num_iterations = num_iter
         self.population_count = population_count
 
-    def population_snapshot(self, gen: List = None):
+    def population_snapshot(self, gen: List = None, with_original=True):
         if gen is None:
             gen = self.generation
         num_plots_per_axis = ceil(sqrt(len(gen)))
@@ -51,6 +51,8 @@ class Generation:
                                                 gen[gen_idx].fitness_cost),
                                         fontsize=8)
                     axs[i, j].imshow(gen[gen_idx].grow_result())
+                    if with_original:
+                        axs[i, j].imshow(self.image_to_esimtate, alpha=0.5)
                     axs[i, j].axis('off')
                     gen_idx += 1
         except IndexError:
@@ -63,9 +65,9 @@ class Generation:
             heappush(h, (dna.fitness_cost, dna))
         return h
 
-    def get_n_best(self, n: int) -> np.ndarray:
+    def get_n_best(self, n: int) -> List:
         eval_gen = self.evaluate_generation()
-        return np.array([heappop(eval_gen)[1].dna[0] for _ in range(n)])
+        return nsmallest(n, eval_gen, key=lambda x: x[0])
 
     def run(self):
         for i in range(self.num_iterations):
@@ -73,9 +75,11 @@ class Generation:
             self.new_generation(n_best, self.population_count)
             # random cross mutation of 4 into self.population_count
 
-    def new_generation(self, base_dna, new_gen_size):
-        a = base_dna
-        new_gen = np.zeros(shape=(self.population_count, base_dna.shape[1]))
+    def new_generation(self, base_dnas: List, new_gen_size):
+        a = np.array(base_dnas)
+        new_gen = np.zeros(shape=(self.population_count, a.shape[1]))
+        # TODO: duplicate dnas to increase population from 4 to n,
+        # take into consideration each dna has more than one chromosomes
         for col in range(new_gen.shape[1]):
             new_gen[:, col] = np.random.choice(a[:, col], self.population_count)
         self.generation = new_gen
@@ -91,7 +95,8 @@ def fitness(arr1, arr2):
 
 if __name__ == '__main__':
     img = imageio.imread('circle.jpg')
-    gen = Generation(population_count=9, species_kind=Circle,
+    gen = Generation(population_count=9,
+                     species_kind=Circle,
                      image_to_esimtate=img)
     gen.population_snapshot()
     # gen_heap = gen.evaluate_generation()
