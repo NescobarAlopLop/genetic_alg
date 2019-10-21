@@ -4,7 +4,7 @@ import matplotlib.animation as animation
 import numpy as np
 from tqdm import tqdm
 from inspect import signature
-from shapes import Circle, Color
+from genes import Circle, Color
 import random
 from dna import DNA
 

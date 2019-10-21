@@ -20,7 +20,7 @@ class Parameters(dict):
     __delattr__ = dict.__delitem__
 
 
-class Creature(ABC):
+class Gene(ABC):
 
     def __init__(self, color: [int, str, Color], color_int, params: Dict):
         if isinstance(color, int):
@@ -75,7 +75,7 @@ class Creature(ABC):
         pass
 
 
-class Circle(Creature):
+class Circle(Gene):
 
     def __init__(self, color=None, color_int=None,
                  radius=None, x=None, y=None, r: int = 200, g: int = 200,
@@ -105,7 +105,7 @@ class Circle(Creature):
         self.y = y
         self.radius = radius
         params = Parameters({'radius': radius, 'x': x, 'y': y})
-        Creature.__init__(self, color, color_int, params)
+        Gene.__init__(self, color, color_int, params)
         # if not color:
         #     color = Color(np.random.randint(0, 3))
         # if not color_int:

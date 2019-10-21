@@ -1,5 +1,5 @@
 import numpy as np
-from shapes import Color
+from genes import Color
 import random
 from inspect import signature
 import matplotlib.pyplot as plt

@@ -7,7 +7,7 @@ import numpy as np
 from math import sqrt, ceil
 
 from dna import DNA
-from shapes import Circle
+from genes import Circle
 
 
 class Generation:
