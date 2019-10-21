@@ -20,7 +20,7 @@ class Parameters(dict):
     __delattr__ = dict.__delitem__
 
 
-class Creature(ABC):
+class Gene(ABC):
 
     def __init__(self, color: [int, str, Color], color_int, params: Dict):
         if isinstance(color, int):
@@ -71,11 +71,11 @@ class Creature(ABC):
 
     @staticmethod
     @abstractmethod
-    def get_random_params(img_shape: Tuple):
+    def generate_random(img_shape: Tuple):
         pass
 
 
-class Circle(Creature):
+class Circle(Gene):
 
     def __init__(self, color=None, color_int=None,
                  radius=None, x=None, y=None, r: int = 200, g: int = 200,
@@ -105,7 +105,7 @@ class Circle(Creature):
         self.y = y
         self.radius = radius
         params = Parameters({'radius': radius, 'x': x, 'y': y})
-        Creature.__init__(self, color, color_int, params)
+        Gene.__init__(self, color, color_int, params)
         # if not color:
         #     color = Color(np.random.randint(0, 3))
         # if not color_int:
@@ -155,7 +155,7 @@ class Circle(Creature):
         return np.clip(other.draw_on(me), 0, 255, dtype=np.uint8)
 
     @staticmethod
-    def get_random_params(img_shape: Tuple):
+    def generate_random(img_shape: Tuple):
         deviation = 30
         x = random.randint(-deviation, img_shape[1] + deviation)
         y = random.randint(-deviation, img_shape[0] + deviation)
