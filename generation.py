@@ -93,6 +93,9 @@ class Generation:
                 dna.apply(dna.get_mutation(90))
         return self.generation
 
+    def __repr__(self):
+        return f'<class Generation> age: {self.age}'
+
     @staticmethod
     def get_gene_pool(base_dnas):
         rv = []
