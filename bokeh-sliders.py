@@ -23,7 +23,8 @@ from bokeh.models import ColumnDataSource, Label
 from bokeh.models.widgets import Slider, TextInput
 from bokeh.plotting import figure
 from main import GeneticAlg
-from shapes import Circle
+from genes import Circle
+
 
 # Set up data
 N = 200
@@ -32,13 +33,13 @@ y = np.sin(x)
 source = ColumnDataSource(data=dict(x=x, y=y))
 
 
-
 # Set up plot
 sin_plot = figure(plot_height=400, plot_width=400, title="my sine wave",
                   tools="crosshair,pan,reset,save,wheel_zoom",
                   x_range=[0, 4*np.pi], y_range=[-2.5, 2.5])
 
 sin_plot.line('x', 'y', source=source, line_width=3, line_alpha=0.6)
+
 
 # Set up widgets
 text = TextInput(title="title", value='my sine wave')
@@ -126,8 +127,10 @@ def update_image(attrname, new_image, new):
 opacity.on_change('value', update_image)
 image_inputs = widgetbox(opacity)
 
-page_layout = layout([[image_figure], [image_inputs], [sin_plot, inputs], ],
-                     sizing_mode='scale_both')
+page_layout = layout([
+    [image_figure], [image_inputs], [sin_plot, inputs],
+], sizing_mode='scale_both')
+
 curdoc().add_root(page_layout)
 
 # this must only be modified from a Bokeh session callback
@@ -159,8 +162,9 @@ except KeyboardInterrupt:
     die = True
     raise KeyboardInterrupt
 
+
 def cleanup_session(session_context):
-    ''' This function is called when a session is closed. '''
+    """This function is called when a session is closed."""
     global die
     die = True
     thread.join(4)

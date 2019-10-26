@@ -17,7 +17,7 @@ class GeneticAlg:
         self.num_iter = num_iter
         self.result_image = img
 
-    def run(self):
+    def run_loop(self):
         try:
             for i, dna_mutation in enumerate(tqdm(self.get_mutation())):
                 mutated_image = self.dna.grow_result(dna_mutation)
@@ -32,7 +32,7 @@ class GeneticAlg:
         except KeyboardInterrupt:
             show_image(mutated_image)
 
-    def run_loop(self):
+    def run_generator(self):
         try:
             for i, dna_mutation in enumerate(tqdm(self.get_mutation())):
                 mutated_image = self.dna.grow_result(dna_mutation)
@@ -41,13 +41,13 @@ class GeneticAlg:
                     self.dna.apply(dna_mutation)
                     self.current_cost = mutation_cost
                     # showimage(mutated_image, self.result_image)
-                    yield self.result_image
+                    yield mutated_image
                 if i % 100 == 0:
                     # show_image(mutated_image, self.result_image)
-                    yield self.result_image
-            return self.dna.grow_result()
+                    yield mutated_image
         except KeyboardInterrupt:
             show_image(mutated_image)
+        yield self.dna.grow_result()
 
     def get_mutation(self):
         for _ in range(self.num_iter):
@@ -65,7 +65,7 @@ class GeneticAlg:
 def show_image(img, img2: np.ndarray = None):
     plt.imshow(np.clip(img, 0, 255))
     if img2 is not None:
-        plt.imshow(img2, alpha=0.5)
+        plt.imshow(img2, alpha=0.6)
     plt.show()
     return img.shape
 
@@ -83,10 +83,12 @@ if __name__ == '__main__':
     # res = b + img
     # res = r + g
     # print('res', res.min(), res.max())
-    alg = GeneticAlg(300, shape=Circle, img=img, num_iter=2000)
-    she = alg.run_loop()
+    alg = GeneticAlg(100, shape=Circle, img=img, num_iter=900)
+    for i in alg.run_generator():
+        show_image(i, img)
+    # she = alg.run_loop()
     # fig = plt.figure()
     # ani = animation.FuncAnimation(fig, alg.run, interval=100)
     # plt.show()
-    show_image(she, img)
-    show_image(she)
+    # show_image(she, img)
+    # show_image(she)
