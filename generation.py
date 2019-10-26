@@ -35,15 +35,19 @@ class Generation:
         self.image_to_esimtate = image_to_esimtate
         self.num_iterations = num_iter
         self.population_count = population_count
+        self.age = 0
 
     def population_snapshot(self, iter: int = None, gen: List = None,
                             with_original=True):
         if gen is None:
             gen = self.generation
         num_plots_per_axis = ceil(sqrt(len(gen)))
+        num_plots_per_axis = 2
         fig, axs = plt.subplots(num_plots_per_axis, num_plots_per_axis,
-                                gridspec_kw={'wspace': 0, 'hspace': 0.2})
-        fig.suptitle(f'{iter} generation sample')
+                                gridspec_kw={'wspace': 0.05, 'hspace': 0.01},
+                                figsize=(4, 5), dpi=200, tight_layout=True)
+
+        fig.suptitle(f'{iter}-th generation sample')
         gen_idx = 0
         try:
             for i in range(num_plots_per_axis):
@@ -75,7 +79,8 @@ class Generation:
         for i in tqdm(range(self.num_iterations)):
             n_best = self.get_n_best(4)
             self.new_generation(n_best)
-            if i % self.num_iterations % 10 == 0:
+            self.age += 1
+            if i % self.num_iterations % 200 == 0:
                 self.population_snapshot(i)
                 best = self.get_n_best(1)[0][1]
                 img = best.grow_result()
@@ -113,13 +118,14 @@ def fitness(arr1, arr2):
 
 
 if __name__ == '__main__':
-    # img = imageio.imread('circle.jpg')
-    img = imageio.imread('mona-lisa.jpg!HalfHD.jpg')
+    img = imageio.imread('circle.jpg')
+    img = imageio.imread('black_base.jpeg')
+    # img = imageio.imread('mona-lisa.jpg!HalfHD.jpg')
     gen = Generation(population_count=9,
-                     num_iter=300,
+                     num_iter=3000,
                      species_kind=Circle,
                      image_to_esimtate=img,
-                     genes_per_dna=40)
+                     genes_per_dna=2)
     gen.population_snapshot()
     gen.run()
     gen.population_snapshot()
