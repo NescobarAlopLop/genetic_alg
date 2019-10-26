@@ -33,8 +33,6 @@ class DNA:
         self.age = 0
         self.max_genes = genes_in_dna
 
-        self.mutating_percentage = 100
-        self.mutation_quantity = 20
         self.image_to_estimate = target_organism
         self.target_shape = target_organism.shape
         self.gene_type = geometric_shape
@@ -43,34 +41,36 @@ class DNA:
         if genes is None:
             self.genes = self.gene_type.generate_random(self.target_shape)
             if self.max_genes > 1:
-                self.genes = self.extend_by(self.max_genes)
+                self.genes = self.extend_by(self.max_genes - 1)
         else:
             self.genes = genes
         self.fitness_cost = fitness(self.grow_result(), self.image_to_estimate)
 
     def extend_by(self, num_new_rows: int) -> np.ndarray:
         for i in range(num_new_rows):
-            self.genes = np.vstack([self.genes, self.gene_type.generate_random(self.target_shape)])
+            self.genes = np.vstack([self.genes,
+                                    self.gene_type.generate_random(
+                                        self.target_shape
+                                    )])
         return self.genes
 
     def get_mutation(self, percent_mutation: int = 70) -> np.ndarray:
         self.age += 1
-        if self.age % 100 == 0:
-            self.genes = np.vstack((self.genes,
-                                    self.gene_type.generate_random(
-                                      self.image_to_estimate.shape)))
+        # if self.age % 100 == 0:
+        #     self.genes = np.vstack((self.genes,
+        #                             self.gene_type.generate_random(
+        #                               self.image_to_estimate.shape)))
         mutated_dna = self.genes.copy()
         num_shapes_to_mutate = mutated_dna.shape[0] * percent_mutation // 100
         rows_to_mutate = np.random.choice(range(mutated_dna.shape[0]),
                                           num_shapes_to_mutate, replace=False)
         for row in rows_to_mutate:
-            mutated_dna[row, :] = \
-                self.gene_type.mutate(
-                    mutated_dna[row])
+            mutated_dna[row, :] = self.gene_type.mutate(mutated_dna[row])
         return mutated_dna
 
     def apply(self, mutation):
         self.genes = mutation
+        self.fitness_cost = fitness(self.grow_result(), self.image_to_estimate)
 
     def grow_result(self, dna: [np.array, None] = None):
         if dna is None:
@@ -81,7 +81,6 @@ class DNA:
             **{'color': 0,
                'color_int': 200,
                'r': x[0],
-               # 'r': x[0]//4,
                'g': x[1],
                'b': x[2],
                'x': x[3],
@@ -99,3 +98,6 @@ class DNA:
 
     def __len__(self):
         return self.genes.shape[0]
+
+    def __lt__(self, other: 'DNA'):
+        return self.fitness_cost < other.fitness_cost

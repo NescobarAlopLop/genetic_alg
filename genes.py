@@ -174,15 +174,18 @@ class Circle(Gene):
             radius = random.randint(start, end)
 
         r = random.randint(0, 255)
-        g = random.randint(0, 255 - r)
-        b = random.randint(0, 255 - r - g)
+        # g = random.randint(0, 255 - r)
+        g = random.randint(0, 255)
+        # b = random.randint(0, 255 - r - g)
+        b = random.randint(0, 255)
 
         return np.array([r, g, b, x, y, radius]).reshape(1, 6)
 
     @staticmethod
     def mutate(arr: np.ndarray) -> np.ndarray:
-        deviation = 5
-        color_rate = 4
+        pos_shift = 50
+        radius_shift = 40
+        color_rate = 40
         # r, g, b, x, y, radius
         r = arr[0] + random.randint(-color_rate, + color_rate)
         r = np.clip(r, 0, 255)
@@ -191,8 +194,8 @@ class Circle(Gene):
         b = arr[2] + random.randint(-color_rate, + color_rate)
         b = np.clip(b, 0, 255 - r - g)
 
-        x = arr[3] + random.randint(-deviation, deviation)
-        y = arr[4] + random.randint(-deviation, deviation)
-        radius = arr[5] + random.randint(-2, 2)
+        x = arr[3] + random.randint(-pos_shift, pos_shift)
+        y = arr[4] + random.randint(-pos_shift, pos_shift)
+        radius = arr[5] + random.randint(-radius_shift, radius_shift)
 
         return np.array([r, g, b, x, y, radius]).reshape((1, 6))

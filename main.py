@@ -39,6 +39,7 @@ class GeneticAlg:
     def fitness(self, arr1, arr2=None):
         if arr2 is None:
             arr2 = self.result_image
+
         return np.linalg.norm(arr1[:, :, 0] - arr2[:, :, 0]) + \
                np.linalg.norm(arr1[:, :, 1] - arr2[:, :, 1]) + \
                np.linalg.norm(arr1[:, :, 2] - arr2[:, :, 2])
@@ -54,6 +55,8 @@ def show_image(img, img2: np.ndarray = None):
 
 if __name__ == '__main__':
     img = imageio.imread('mona-lisa.jpg!HalfHD.jpg')
+    img = imageio.imread(
+        '/home/ge/Documents/genetic_image_approximation/circles.jpg')
     # r = Circle('red', 180, 60, x=2, y=200)
     # g = Circle(1, 200, 50, x=60, y=200)
     # b = Circle(Color['blue'], 200, 50, x=80, y=200)
@@ -63,7 +66,7 @@ if __name__ == '__main__':
     # res = b + img
     # res = r + g
     # print('res', res.min(), res.max())
-    alg = GeneticAlg(20, shape=Circle, img=img, num_iter=5000)
+    alg = GeneticAlg(4, shape=Circle, img=img, num_iter=5000)
     she = alg.run()
     # fig = plt.figure()
     # ani = animation.FuncAnimation(fig, alg.run, interval=100)
