@@ -88,10 +88,16 @@ class Generation:
                 plt.show()
 
     def new_generation(self, base_dnas: List):
+        # # base dnas transfer as is to next generation
+        for i, dna in enumerate(base_dnas):
+            self.generation[i] = dna[1]
+
         gene_pool = self.get_gene_pool(base_dnas)
         mutate = 0
-        for dna in self.generation:
+        for dna in self.generation[len(base_dnas):]:
             for col in range(dna.genes.shape[1]):
+                # TODO: dna with higher score has better chance to be picked
+                #  as gene donor
                 dna.genes[:, col] = np.random.choice(gene_pool[:, col],
                                                      dna.genes.shape[0])
             if mutate % 2 == 0:
