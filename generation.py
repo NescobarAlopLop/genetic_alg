@@ -45,25 +45,24 @@ class Generation:
         num_plots_per_axis = ceil(sqrt(len(gen)))
         num_plots_per_axis = 3
         fig, axs = plt.subplots(num_plots_per_axis, num_plots_per_axis,
-                                gridspec_kw={'wspace': 0.05, 'hspace': 0.01},
+                                gridspec_kw={'wspace': 0.05, 'hspace': 0.05},
                                 figsize=(4, 5), dpi=200, tight_layout=True)
 
         fig.suptitle(f'{iter}-th generation sample')
         gen_idx = 0
-        try:
-            for i in range(num_plots_per_axis):
-                for j in range(num_plots_per_axis):
-                    axs[i, j].set_title('dna: {}, fitness: {:.2f}'
-                                        .format(gen_idx,
-                                                gen[gen_idx].fitness_cost),
-                                        fontsize=8)
-                    axs[i, j].imshow(gen[gen_idx].grow_result())
-                    if with_original:
-                        axs[i, j].imshow(self.image_to_esimtate, alpha=0.5)
-                    axs[i, j].axis('off')
-                    gen_idx += 1
-        except IndexError:
-            pass
+
+        for i in range(num_plots_per_axis):
+            for j in range(num_plots_per_axis):
+                axs[i, j].set_title('dna: {}, fitness: {:.2f}'
+                                    .format(gen_idx,
+                                            gen[gen_idx].fitness_cost),
+                                    fontsize=8)
+                axs[i, j].imshow(gen[gen_idx].grow_result())
+                if with_original:
+                    axs[i, j].imshow(self.image_to_esimtate, alpha=0.5)
+                axs[i, j].axis('off')
+                gen_idx += 1
+
         plt.show()
 
     def evaluate_generation(self):
@@ -144,7 +143,7 @@ if __name__ == '__main__':
                      num_iter=2000,
                      species_kind=Circle,
                      image_to_esimtate=img,
-                     genes_per_dna=2)
+                     genes_per_dna=20)
     gen.population_snapshot()
     gen.run()
     gen.population_snapshot()
